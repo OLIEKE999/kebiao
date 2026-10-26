@@ -352,6 +352,7 @@ function shortRoom(r){
   const m = s.match(/(\d+)\s*$/);
   return m ? m[1] : s;
 }
+const isWeChat = () => /MicroMessenger/i.test(navigator.userAgent);
 const slotOf = p => Math.ceil(p / 2);
 const NSLOT = Math.ceil(NP / 2);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
@@ -881,7 +882,7 @@ function openSettings(){
     <div style="height:6px"></div>
     <div class="list-item" id="s-share"><div class="li-ic">
       <svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
-      </div><div class="li-main"><div class="li-t">分享给同学</div><div class="li-s">生成一条链接，对方打开就能用</div></div></div>
+      </div><div class="li-main"><div class="li-t">分享给同学</div><div class="li-s">复制网址，发到群里就能用</div></div></div>
     <div class="list-item" id="s-exp"><div class="li-ic">
       <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>
       </div><div class="li-main"><div class="li-t">导出备份</div><div class="li-s">存成文件，换设备也不丢</div></div></div>
@@ -926,43 +927,44 @@ function openSettings(){
   });
 }
 
-function shareToFriend(){
-  const mini = {
-    t: state.termStart, w: state.totalWeeks,
-    c: state.courses.map(c => [c.name, c.teacher||"", c.room||"", c.day, c.start, c.end,
-      (c.weeks||{type:"all"}).type, (c.weeks||{}).from||0, (c.weeks||{}).to||0, c.color||0,
-      (c.weeks||{}).list||null])
-  };
-  const link = location.origin + location.pathname + "#s=" + b64enc(JSON.stringify(mini));
-  const text = "我的课表：" + link;
+function copyText(str, okMsg){
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(link).then(
-      () => toast("链接已复制，发给同学就行"),
-      () => fallbackCopy(link)
+    navigator.clipboard.writeText(str).then(
+      () => toast(okMsg),
+      () => fallbackCopy(str, okMsg)
     );
-  } else fallbackCopy(link);
+  } else fallbackCopy(str, okMsg);
+}
+function fallbackCopy(str, okMsg){
+  const ta = document.createElement("textarea");
+  ta.value = str; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); toast(okMsg); }
+  catch(e){ toast("复制失败，手动输入 " + str.replace(/^https?:\/\//, "")); }
+  ta.remove();
+}
 
-  function fallbackCopy(str){
-    const ta = document.createElement("textarea");
-    ta.value = str; ta.style.position = "fixed"; ta.style.opacity = "0";
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); toast("链接已复制"); }
-    catch(e){ toast("复制失败，手动选取链接"); }
-    ta.remove();
-  }
+function shareToFriend(){
+  let url = (location.protocol === "http:" || location.protocol === "https:")
+    ? location.origin + location.pathname
+    : "https://dht264.top/";
+  url = url.replace(/index\.html$/, "");
+  copyText(url, "链接已复制，发这个就行：" + url.replace(/^https?:\/\//, "").replace(/\/$/, ""));
 }
 
 function exportBackup(){
+  if (isWeChat()){ toast("微信里下载不了文件，点右上角选「在浏览器打开」再导出"); return; }
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "课表备份-" + toISO(new Date()) + ".json";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast("已导出");
+  toast("已导出到「下载」文件夹");
 }
 
 function importBackup(){
+  if (isWeChat()){ toast("微信里选不了文件，点右上角选「在浏览器打开」再导入"); return; }
   const inp = document.createElement("input");
   inp.type = "file"; inp.accept = ".json,application/json";
   inp.onchange = () => {
