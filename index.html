@@ -109,6 +109,10 @@ input,select{font-family:inherit;font-size:14px;color:inherit;}
   display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
   overflow-wrap:anywhere;word-break:break-word;min-width:0;
 }
+.course .cteach{
+  font-size:9px;line-height:1.2;opacity:.88;font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;
+}
 .course .croom{
   font-size:9px;line-height:1.2;opacity:.72;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;
@@ -236,6 +240,45 @@ input,select{font-family:inherit;font-size:14px;color:inherit;}
   max-width:80vw;text-align:center;line-height:1.4;
 }
 #toast.show{opacity:1;transform:translate(-50%,0);}
+#toast{display:flex;align-items:center;gap:12px;}
+#toast .t-undo{
+  pointer-events:auto;flex:none;font-size:13px;font-weight:600;color:#7FC4FF;
+  padding:2px 4px;border-radius:6px;
+}
+#toast .t-undo:active{background:rgba(255,255,255,.16);}
+
+/* ---------- 彩蛋 ---------- */
+.egg-mask{
+  position:fixed;top:0;right:0;bottom:0;left:0;z-index:200;
+  background:rgba(12,15,20,.9);display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s;padding:24px;
+}
+.egg-mask.show{opacity:1;}
+.egg-card{
+  width:100%;max-width:300px;background:#fff;border-radius:22px;padding:30px 22px 20px;
+  text-align:center;position:relative;
+  transform:scale(.84);opacity:0;
+  transition:transform .5s cubic-bezier(.2,1.35,.4,1),opacity .3s;
+}
+.egg-mask.show .egg-card{transform:scale(1);opacity:1;}
+.egg-badge{
+  width:78px;height:78px;border-radius:50%;background:#185FA5;color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 18px;box-shadow:0 0 0 6px rgba(24,95,165,.12);
+  animation:eggPulse 2.2s ease-in-out infinite;
+}
+@keyframes eggPulse{
+  0%,100%{box-shadow:0 0 0 6px rgba(24,95,165,.12);}
+  50%{box-shadow:0 0 0 16px rgba(24,95,165,.04);}
+}
+.egg-badge i{font-style:normal;font-size:9px;opacity:.82;letter-spacing:1.5px;margin-bottom:3px;}
+.egg-badge b{font-size:23px;line-height:1;font-weight:700;letter-spacing:.5px;}
+.egg-card h3{font-size:18px;font-weight:600;margin:0 0 8px;letter-spacing:.3px;}
+.egg-card p{font-size:12.5px;color:#8A9099;line-height:1.65;margin:0;}
+.egg-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0 18px;text-align:left;}
+.egg-stat{background:#F5F7FA;border-radius:10px;padding:9px 11px;}
+.egg-stat b{display:block;font-size:16px;font-weight:600;color:#151719;line-height:1.25;font-feature-settings:"tnum";}
+.egg-stat span{font-size:10.5px;color:#8A9099;}
 </style>
 </head>
 <body>
@@ -243,9 +286,6 @@ input,select{font-family:inherit;font-size:14px;color:inherit;}
   <header class="hdr">
     <h1>顿河土264</h1>
     <div class="acts">
-      <button class="iconbtn" id="btnToday" title="回到本周">
-        <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
-      </button>
       <button class="iconbtn" id="btnSet" title="设置">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
       </button>
@@ -281,7 +321,7 @@ const PERIODS = [
   ["10:15","11:00"],["11:00","11:45"],
   ["13:30","14:15"],["14:15","15:00"],
   ["15:15","16:00"],["16:00","16:45"],
-  ["19:00","19:45"],["19:45","20:30"]
+  ["19:00","19:45"],["19:45","20:35"]
 ];
 const NP = PERIODS.length;
 const COLORS = [
@@ -294,7 +334,7 @@ const COLORS = [
   {main:"#3B6D11",bg:"#EAF3DE",text:"#173404"},
   {main:"#5F5E5A",bg:"#F1EFE8",text:"#2C2C2A"}
 ];
-const STORE_KEY = "kebiao.dht264.v3";
+const STORE_KEY = "kebiao.dht264.v4";
 const DAY_MS = 86400000;
 
 /* ================= 工具 ================= */
@@ -307,6 +347,11 @@ const addDays = (d, n) => { const x = new Date(d.getFullYear(), d.getMonth(), d.
 const dowOf = d => { const g = d.getDay(); return g === 0 ? 7 : g; };
 const dayDiff = (a, b) => Math.round((new Date(b.getFullYear(),b.getMonth(),b.getDate()) - new Date(a.getFullYear(),a.getMonth(),a.getDate())) / DAY_MS);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function shortRoom(r){
+  const s = String(r || "");
+  const m = s.match(/(\d+)\s*$/);
+  return m ? m[1] : s;
+}
 const slotOf = p => Math.ceil(p / 2);
 const NSLOT = Math.ceil(NP / 2);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
@@ -328,7 +373,7 @@ function b64dec(s){
 
 /* ================= 状态 ================= */
 function defaultState(){
-  return JSON.parse("{\"termStart\":\"2026-08-24\",\"totalWeeks\":19,\"courses\":[{\"id\":\"k0\",\"name\":\"体育（1）\",\"teacher\":\"周东\",\"room\":\"\",\"day\":2,\"start\":1,\"end\":2,\"color\":0,\"weeks\":{\"type\":\"range\",\"from\":1,\"to\":18}},{\"id\":\"k1\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1403\",\"day\":3,\"start\":1,\"end\":2,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":18}},{\"id\":\"k2\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1403\",\"day\":4,\"start\":1,\"end\":2,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":18}},{\"id\":\"k3\",\"name\":\"俄语等级课程（口语）（外）（1）\",\"teacher\":\"NAUMCHUK EVGENIIA\",\"room\":\"1311\",\"day\":2,\"start\":3,\"end\":4,\"color\":2,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k4\",\"name\":\"马克思主义基本原理\",\"teacher\":\"张红珍\",\"room\":\"1214\",\"day\":3,\"start\":3,\"end\":4,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":14}},{\"id\":\"k5\",\"name\":\"俄语等级课程（口语）（外）（1）\",\"teacher\":\"NAUMCHUK EVGENIIA\",\"room\":\"1309\",\"day\":3,\"start\":3,\"end\":4,\"color\":2,\"weeks\":{\"type\":\"list\",\"list\":[17]}},{\"id\":\"k6\",\"name\":\"线性代数\",\"teacher\":\"杨振起\",\"room\":\"1315\",\"day\":4,\"start\":3,\"end\":4,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":16}},{\"id\":\"k7\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"张发芹\",\"room\":\"1103\",\"day\":5,\"start\":3,\"end\":4,\"color\":5,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k8\",\"name\":\"线性代数\",\"teacher\":\"杨振起\",\"room\":\"1419\",\"day\":1,\"start\":5,\"end\":6,\"color\":4,\"weeks\":{\"type\":\"list\",\"list\":[6,8,10,12]}},{\"id\":\"k9\",\"name\":\"土木工程专业导论\",\"teacher\":\"宋亚敏\",\"room\":\"1419\",\"day\":1,\"start\":5,\"end\":6,\"color\":6,\"weeks\":{\"type\":\"list\",\"list\":[5,7,9,11,13,14,15,16]}},{\"id\":\"k10\",\"name\":\"计算机技术基础（Python）\",\"teacher\":\"刘乐乐\",\"room\":\"1202\",\"day\":2,\"start\":5,\"end\":6,\"color\":7,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":16}},{\"id\":\"k11\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"张发芹\",\"room\":\"1307\",\"day\":4,\"start\":5,\"end\":6,\"color\":5,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k12\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1403\",\"day\":5,\"start\":5,\"end\":6,\"color\":1,\"weeks\":{\"type\":\"list\",\"list\":[6,9,12,15]}},{\"id\":\"k13\",\"name\":\"计算机技术基础（Python）\",\"teacher\":\"刘乐乐\",\"room\":\"\",\"day\":2,\"start\":7,\"end\":8,\"color\":7,\"weeks\":{\"type\":\"range\",\"from\":6,\"to\":17}},{\"id\":\"k14\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"张发芹\",\"room\":\"1404\",\"day\":3,\"start\":7,\"end\":8,\"color\":5,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k15\",\"name\":\"马克思主义基本原理\",\"teacher\":\"张红珍\",\"room\":\"1111\",\"day\":4,\"start\":7,\"end\":8,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":14}},{\"id\":\"k16\",\"name\":\"形势与政策\",\"teacher\":\"赵锋\",\"room\":\"1202\",\"day\":5,\"start\":7,\"end\":8,\"color\":0,\"weeks\":{\"type\":\"range\",\"from\":9,\"to\":12}},{\"id\":\"k17\",\"name\":\"大学生劳动教育理论与实践\",\"teacher\":\"刘庆祥\",\"room\":\"1107\",\"day\":1,\"start\":9,\"end\":10,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":8}},{\"id\":\"k18\",\"name\":\"大学生职业生涯规划\",\"teacher\":\"刘庆祥\",\"room\":\"1103\",\"day\":3,\"start\":9,\"end\":10,\"color\":2,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}},{\"id\":\"k19\",\"name\":\"大学生国防教育\",\"teacher\":\"刘宇\",\"room\":\"1111\",\"day\":4,\"start\":9,\"end\":10,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}},{\"id\":\"k20\",\"name\":\"大学生心理健康教育\",\"teacher\":\"魏思佳\",\"room\":\"1103\",\"day\":5,\"start\":9,\"end\":10,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}}],\"overrides\":[]}");
+  return JSON.parse("{\"termStart\":\"2026-08-24\",\"totalWeeks\":19,\"courses\":[{\"id\":\"k0\",\"name\":\"体育（1）\",\"teacher\":\"\",\"room\":\"\",\"day\":2,\"start\":1,\"end\":2,\"color\":0,\"weeks\":{\"type\":\"range\",\"from\":1,\"to\":18}},{\"id\":\"k1\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1号教学楼1403\",\"day\":3,\"start\":1,\"end\":2,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":18}},{\"id\":\"k2\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1号教学楼1403\",\"day\":4,\"start\":1,\"end\":2,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":18}},{\"id\":\"k3\",\"name\":\"俄语等级课程（口语）（外）（1）\",\"teacher\":\"NAUMCHUK EVGENIIA\",\"room\":\"1号教学楼1311\",\"day\":2,\"start\":3,\"end\":4,\"color\":2,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k4\",\"name\":\"马克思主义基本原理\",\"teacher\":\"张红珍\",\"room\":\"1号教学楼1214\",\"day\":3,\"start\":3,\"end\":4,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":8}},{\"id\":\"k5\",\"name\":\"马克思主义基本原理\",\"teacher\":\"范宜华\",\"room\":\"1号教学楼1214\",\"day\":3,\"start\":3,\"end\":4,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":9,\"to\":14}},{\"id\":\"k6\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"司扬\",\"room\":\"1号教学楼1105\",\"day\":3,\"start\":3,\"end\":4,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":15,\"to\":16}},{\"id\":\"k7\",\"name\":\"俄语等级课程（口语）（外）（1）\",\"teacher\":\"NAUMCHUK EVGENIIA\",\"room\":\"1号教学楼1309\",\"day\":3,\"start\":3,\"end\":4,\"color\":2,\"weeks\":{\"type\":\"list\",\"list\":[17]}},{\"id\":\"k8\",\"name\":\"线性代数\",\"teacher\":\"杨振起\",\"room\":\"1号教学楼1315\",\"day\":4,\"start\":3,\"end\":4,\"color\":5,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":16}},{\"id\":\"k9\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"司扬\",\"room\":\"1号教学楼1408\",\"day\":5,\"start\":3,\"end\":4,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":19}},{\"id\":\"k10\",\"name\":\"线性代数\",\"teacher\":\"杨振起\",\"room\":\"1号教学楼1419\",\"day\":1,\"start\":5,\"end\":6,\"color\":5,\"weeks\":{\"type\":\"list\",\"list\":[6,8,10,12]}},{\"id\":\"k11\",\"name\":\"土木工程专业导论\",\"teacher\":\"宋亚敏\",\"room\":\"1号教学楼1419\",\"day\":1,\"start\":5,\"end\":6,\"color\":6,\"weeks\":{\"type\":\"list\",\"list\":[5,7,9,11,13,14,15,16]}},{\"id\":\"k12\",\"name\":\"计算机技术基础（Python）\",\"teacher\":\"刘乐乐\",\"room\":\"1号教学楼1202\",\"day\":2,\"start\":5,\"end\":6,\"color\":7,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":16}},{\"id\":\"k13\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"司扬\",\"room\":\"1号教学楼1309\",\"day\":4,\"start\":5,\"end\":6,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":6,\"to\":19}},{\"id\":\"k14\",\"name\":\"高等数学（1）\",\"teacher\":\"李爱芹\",\"room\":\"1号教学楼1403\",\"day\":5,\"start\":5,\"end\":6,\"color\":1,\"weeks\":{\"type\":\"list\",\"list\":[6,9,12,15]}},{\"id\":\"k15\",\"name\":\"计算机技术基础（Python）\",\"teacher\":\"刘乐乐\",\"room\":\"\",\"day\":2,\"start\":7,\"end\":8,\"color\":7,\"weeks\":{\"type\":\"range\",\"from\":6,\"to\":17}},{\"id\":\"k16\",\"name\":\"俄语等级课程（精读）（1）\",\"teacher\":\"司扬\",\"room\":\"1号教学楼1314\",\"day\":3,\"start\":7,\"end\":8,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":6,\"to\":19}},{\"id\":\"k17\",\"name\":\"马克思主义基本原理\",\"teacher\":\"张红珍\",\"room\":\"1号教学楼1111\",\"day\":4,\"start\":7,\"end\":8,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":8}},{\"id\":\"k18\",\"name\":\"马克思主义基本原理\",\"teacher\":\"郭忠利\",\"room\":\"1号教学楼1111\",\"day\":4,\"start\":7,\"end\":8,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":9,\"to\":14}},{\"id\":\"k19\",\"name\":\"形势与政策\",\"teacher\":\"赵锋\",\"room\":\"1号教学楼1202\",\"day\":5,\"start\":7,\"end\":8,\"color\":0,\"weeks\":{\"type\":\"range\",\"from\":9,\"to\":12}},{\"id\":\"k20\",\"name\":\"大学生劳动教育理论与实践\",\"teacher\":\"刘庆祥\",\"room\":\"1号教学楼1107\",\"day\":1,\"start\":9,\"end\":10,\"color\":1,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":8}},{\"id\":\"k21\",\"name\":\"大学生职业生涯规划\",\"teacher\":\"刘庆祥\",\"room\":\"1号教学楼1103\",\"day\":3,\"start\":9,\"end\":10,\"color\":2,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}},{\"id\":\"k22\",\"name\":\"大学生国防教育\",\"teacher\":\"刘宇\",\"room\":\"1号教学楼1111\",\"day\":4,\"start\":9,\"end\":10,\"color\":3,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}},{\"id\":\"k23\",\"name\":\"大学生心理健康教育\",\"teacher\":\"魏思佳\",\"room\":\"1号教学楼1103\",\"day\":5,\"start\":9,\"end\":10,\"color\":4,\"weeks\":{\"type\":\"range\",\"from\":5,\"to\":12}}],\"overrides\":[]}");
 }
 function loadState(){
   try {
@@ -427,6 +472,7 @@ function buildDay(dateStr){
         color:o.color == null ? 2 : o.color, tag:"补课" });
     }
   }
+  for (const it of list){ if (/^体育/.test(it.name)) it.teacher = ""; }
   list.sort((a,b) => a.start - b.start || a.end - b.end);
   return list;
 }
@@ -481,7 +527,8 @@ function renderGrid(){
         + ' style="grid-column:' + (dow+1) + ';grid-row:' + it.start + '/' + (it.end+1)
         + ';background:' + c.bg + ';border-left-color:' + c.main + ';color:' + c.text + '">'
         + '<div class="cname">' + esc(it.name) + '</div>'
-        + (!it.tag && it.room ? '<div class="croom">' + esc(it.room) + '</div>' : '')
+        + (it.teacher ? '<div class="cteach">' + esc(it.teacher) + '</div>' : '')
+        + (!it.tag && it.room ? '<div class="croom">' + esc(shortRoom(it.room)) + '</div>' : '')
         + (it.tag ? '<span class="tag">' + it.tag + '</span>' : '')
         + '</div>');
     }
@@ -514,12 +561,18 @@ function render(){
 
 /* ================= toast ================= */
 let toastTimer = null;
-function toast(msg){
+function toast(msg, onUndo){
   const t = $("#toast");
-  t.textContent = msg;
-  t.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+  if (onUndo){
+    t.innerHTML = '<span>' + esc(msg) + '</span><button class="t-undo" type="button">撤销</button>';
+    t.querySelector(".t-undo").onclick = () => { onUndo(); t.classList.remove("show"); };
+    toastTimer = setTimeout(() => t.classList.remove("show"), 5000);
+  } else {
+    t.textContent = msg;
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+  }
+  t.classList.add("show");
 }
 
 /* ================= Sheet ================= */
@@ -583,8 +636,13 @@ function openDetail(key, dateStr){
     `, (s) => {
       s.querySelector("#dMove").onclick = () => { closeSheet(); openMoveForm(c, dateStr); };
       s.querySelector("#dCancel").onclick = () => {
-        state.overrides.push({ id: uid(), type:"cancel", date: dateStr, courseId: c.id });
-        save(); closeSheet(); render(); toast("已停课 · " + (fromISO(dateStr).getMonth()+1) + "月" + fromISO(dateStr).getDate() + "日");
+        const ovId = uid();
+        state.overrides.push({ id: ovId, type:"cancel", date: dateStr, courseId: c.id });
+        save(); closeSheet(); render();
+        toast("已停课 · " + (fromISO(dateStr).getMonth()+1) + "月" + fromISO(dateStr).getDate() + "日", () => {
+          state.overrides = state.overrides.filter(o => o.id !== ovId);
+          save(); render(); toast("已恢复");
+        });
       };
       s.querySelector("#dEdit").onclick = () => { closeSheet(); openCourseForm(c); };
       s.querySelector("#dDel").onclick = () => {
@@ -830,6 +888,9 @@ function openSettings(){
     <div class="list-item" id="s-imp"><div class="li-ic">
       <svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 20h16"/></svg>
       </div><div class="li-main"><div class="li-t">导入备份</div><div class="li-s">从文件恢复课表</div></div></div>
+    <div class="list-item" id="s-reset-ov"><div class="li-ic">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      </div><div class="li-main"><div class="li-t">清除全部调课记录</div><div class="li-s" id="s-ov-count">把调课、停课、补课全部还原</div></div></div>
     <div class="list-item" id="s-clear"><div class="li-ic" style="background:#FDF0EF">
       <svg viewBox="0 0 24 24" style="stroke:#C0392B"><path d="M4 7h16"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/></svg>
       </div><div class="li-main"><div class="li-t" style="color:#C0392B">清空全部数据</div><div class="li-s">课表和调课记录都会删除</div></div></div>
@@ -847,6 +908,16 @@ function openSettings(){
     s.querySelector("#s-share").onclick = shareToFriend;
     s.querySelector("#s-exp").onclick = exportBackup;
     s.querySelector("#s-imp").onclick = importBackup;
+    const ovCount = s.querySelector("#s-ov-count");
+    if (ovCount) ovCount.textContent = state.overrides.length
+      ? "当前有 " + state.overrides.length + " 条调整，点这里全部还原"
+      : "目前没有调整记录";
+    s.querySelector("#s-reset-ov").onclick = () => {
+      if (!state.overrides.length){ toast("目前没有调课记录"); return; }
+      if (confirm("清除全部 " + state.overrides.length + " 条调课、停课、补课记录？课表会恢复到原始状态。")){
+        state.overrides = []; save(); closeSheet(); render(); toast("已全部还原");
+      }
+    };
     s.querySelector("#s-clear").onclick = () => {
       if (confirm("清空所有课程和调课记录？此操作不可恢复。")){
         state = defaultState(); save(); closeSheet(); viewWeek = 1; render(); toast("已清空");
@@ -948,13 +1019,53 @@ function checkShareHash(){
   } catch(e){ return false; }
 }
 
+/* ================= 彩蛋 ================= */
+const EGG_FROM_WEEK = 10, EGG_TAPS = 10;
+let eggTaps = 0, eggTimer = null;
+
+function onWeekTap(){
+  if (viewWeek < EGG_FROM_WEEK){ eggTaps = 0; return; }
+  eggTaps++;
+  clearTimeout(eggTimer);
+  eggTimer = setTimeout(() => { eggTaps = 0; }, 900);
+  if (eggTaps >= EGG_TAPS){ eggTaps = 0; openEgg(); }
+}
+
+function openEgg(){
+  if (document.querySelector(".egg-mask")) return;
+  if (navigator.vibrate) { try { navigator.vibrate([12,55,12,55,34]); } catch(e){} }
+  const remain = Math.max(0, state.totalWeeks - currentWeek());
+  const mask = document.createElement("div");
+  mask.className = "egg-mask";
+  mask.innerHTML = '<div class="egg-card">'
+    + '<div class="egg-badge"><i>顿河土</i><b>264</b></div>'
+    + '<h3>被你找到了</h3>'
+    + '<p>第 ' + viewWeek + ' 周连点 ' + EGG_TAPS + ' 下，<br>这耐心拿去背单词该多好。</p>'
+    + '<div class="egg-stats">'
+    + '<div class="egg-stat"><b>' + state.courses.length + '</b><span>条课程安排</span></div>'
+    + '<div class="egg-stat"><b>' + remain + '</b><span>周后放假</span></div>'
+    + '<div class="egg-stat"><b>' + PERIODS[0][0] + '</b><span>最早一节课</span></div>'
+    + '<div class="egg-stat"><b>' + PERIODS[NP-1][1] + '</b><span>最晚一节课</span></div>'
+    + '</div>'
+    + '<button class="btn primary" id="eggClose">收下这份虚荣</button>'
+    + '</div>';
+  document.body.appendChild(mask);
+  requestAnimationFrame(() => mask.classList.add("show"));
+  const close = () => {
+    mask.classList.remove("show");
+    setTimeout(() => mask.remove(), 320);
+  };
+  mask.onclick = e => { if (e.target === mask) close(); };
+  mask.querySelector("#eggClose").onclick = close;
+}
+
 /* ================= 交互绑定 ================= */
 $("#btnPrev").onclick = () => { if (viewWeek > 1){ viewWeek--; render(); } else toast("已经是第 1 周"); };
 $("#btnNext").onclick = () => { if (viewWeek < state.totalWeeks){ viewWeek++; render(); } else toast("已经是最后一周"); };
 $("#btnThisWeek").onclick = () => { viewWeek = currentWeek(); pendingScroll = null; render(); toast("回到第 " + viewWeek + " 周"); };
-$("#btnToday").onclick = () => { viewWeek = currentWeek(); render(); };
 $("#btnSet").onclick = openSettings;
 $("#btnAdd").onclick = () => openCourseForm(null);
+document.querySelector(".wb-mid").addEventListener("click", onWeekTap);
 
 $("#tt").addEventListener("click", e => {
   const course = e.target.closest(".course");
