@@ -906,7 +906,6 @@ function loadDemo(){
 function openSettings(){
   openSheet(`
     <h2>设置</h2>
-    <p class="sub">学期信息决定「第几周」怎么算</p>
     <div class="field"><label>开学第一周的周一</label>
       <input type="date" id="s-start" value="${state.termStart}"></div>
     <div class="field"><label>学期总周数</label>
@@ -1078,7 +1077,7 @@ function openEgg(){
     + '<div class="egg-stats">'
     + '<div class="egg-stat"><b>' + state.courses.length + '</b><span>条课程安排</span></div>'
     + '<div class="egg-stat"><b>' + remain + '</b><span>周后放假</span></div>'
-    + '<div class="egg-stat"><b>' + PERIODS[0][0] + '</b><span>最早一节课</span></div>'
+    + '<div class="egg-stat"><b>张富凯</b><span>第一个发现</span></div>'
     + '<div class="egg-stat"><b>' + PERIODS[NP-1][1] + '</b><span>最晚一节课</span></div>'
     + '</div>'
     + '<button class="btn primary" id="eggClose">收下这份虚荣</button>'
