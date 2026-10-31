@@ -911,6 +911,9 @@ function openSettings(){
     <div class="field"><label>学期总周数</label>
       <input type="number" id="s-weeks" min="1" max="30" value="${state.totalWeeks}"></div>
     <div style="height:6px"></div>
+    <div class="list-item" id="s-install"><div class="li-ic">
+      <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M12 9v6M9.5 12.5L12 15l2.5-2.5"/></svg>
+      </div><div class="li-main"><div class="li-t">怎么装到桌面</div><div class="li-s">iPhone、安卓、鸿蒙的添加方法</div></div></div>
     <div class="list-item" id="s-share"><div class="li-ic">
       <svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
       </div><div class="li-main"><div class="li-t">分享给同学</div><div class="li-s">复制网址，发到群里就能用</div></div></div>
@@ -936,6 +939,10 @@ function openSettings(){
       if (st) state.termStart = toISO(mondayOf(fromISO(st)));
       state.totalWeeks = wk;
       save(); viewWeek = currentWeek(); closeSheet(); render(); toast("已保存");
+    };
+    s.querySelector("#s-install").onclick = () => {
+      closeSheet();
+      setTimeout(() => maybeShowInstallTip(true), 140);
     };
     s.querySelector("#s-share").onclick = shareToFriend;
     s.querySelector("#s-exp").onclick = exportBackup;
@@ -1094,12 +1101,14 @@ function openEgg(){
 
 /* ================= 安装引导 ================= */
 const TIP_KEY = "kebiao.installTip.v2";
-function maybeShowInstallTip(){
-  try { if (localStorage.getItem(TIP_KEY)) return; } catch(e){}
-  const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
-    || window.navigator.standalone === true;
-  if (standalone) return;
-  try { localStorage.setItem(TIP_KEY, "1"); } catch(e){}
+function maybeShowInstallTip(force){
+  if (!force){
+    try { if (sessionStorage.getItem(TIP_KEY)) return; } catch(e){}
+    const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+      || window.navigator.standalone === true;
+    if (standalone) return;
+    try { sessionStorage.setItem(TIP_KEY, "1"); } catch(e){}
+  }
 
   const mask = document.createElement("div");
   mask.className = "tip-mask";
